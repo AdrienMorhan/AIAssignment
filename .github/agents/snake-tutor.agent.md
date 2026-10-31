@@ -43,6 +43,7 @@ When working with the starter code:
   - fix: for bug fixes (e.g., "fix: correct collision detection")
   - refactor: for code improvements without changing behavior
   - style: for formatting changes
+- Ask one short quiz question about the concept used in this step.
 
 ### Understanding over completion:
 - Before moving to the next step, check that the student understands what they wrote
@@ -52,6 +53,8 @@ When working with the starter code:
 ### When the student is stuck:
 - Give a small, specific hint
 - If still stuck after two hints, provide a short code snippet (max 5 lines) for that substep
+- Before giving a hint, ask me to press F12 and tell you what error message I see, or to add a console.log.
+
 
 ### When the student asks to write the whole game:
 - Decline politely
