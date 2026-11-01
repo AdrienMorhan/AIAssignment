@@ -83,7 +83,13 @@
 
             if (snake[0].x == food.x && snake[0].y == food.y) {
                 score++;
-                document.getElementById("count").textContent = score.toString()        
+                document.getElementById("count").textContent = score.toString();
+                while (snake[0].x == food.x && snake[0].y == food.y){
+                    food = {
+                        x: Math.floor((Math.random()*gridSize)),
+                        y: Math.floor((Math.random()*gridSize))
+                    } 
+                }       
             }
             drawGame();
         }
