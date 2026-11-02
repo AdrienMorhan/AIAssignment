@@ -5,21 +5,29 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <title>Snake Game</title>
     <style>
         canvas {
-            border: 1px solid black;
+            border: 3px solid black;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
             background-color: greenyellow;
         }
     </style>
-    <div class="counter">
-        <h2>Score:</h2>
-        <h2 id="count">0</h2>
-    </div>
 </head>
 <body>
 
     <h1>Snake</h1>
+    <div class="score">
+        <div class="counter">
+            <h4>Score:</h4>
+            <h4 id="count">0</h4>
+        </div>
+        <div class="best">
+            <h4>Best:</h4>
+            <h4 id="bestScore">0</h4>
+        </div>
+    </div>
     <canvas id="gameCanvas" width="400"
             height="400"></canvas>
     <p id="info"></p>
@@ -38,6 +46,7 @@
             { x: 9, y: 10 },
             { x: 8, y: 10 }
         ];
+        
         let direction = { x: 1, y: 0 };
         let food = { x: 15, y: 15 };
         let score = 0;
@@ -55,13 +64,29 @@
             );
 
             ctx.fillStyle = "green";
-            for (const segment of snake) {
-                ctx.fillRect(
-                    segment.x * gridSize,
-                    segment.y * gridSize,
-                    gridSize, gridSize
-                );
-            }
+            snake.forEach((segment, index) => {
+                if (index===0){
+                    let radius;
+                    ctx.beginPath();
+                    if (direction.x===1){
+                        radius = [0, 20, 20, 0];
+                    } else if (direction.x===-1){
+                        radius = [20, 0, 0, 20];
+                    } else if (direction.y===1){
+                        radius = [0, 0, 20, 20];
+                    } else {
+                        radius = [20, 20, 0, 0];
+                    }
+                    ctx.roundRect(segment.x*gridSize, segment.y*gridSize, gridSize, gridSize, radius);
+                    ctx.fill();
+                } else {
+                    ctx.fillRect(
+                        segment.x * gridSize,
+                        segment.y * gridSize,
+                        gridSize, gridSize
+                    );
+                }
+            });
         };
 
         drawGame();
@@ -83,8 +108,11 @@
         // ===================================
 
         function moveSnake() {
-            if (snake[0].x+direction.x < 0 || snake[0].x+direction.x > gridSize-1 || snake[0].y+direction.y < 1 || snake[0].y+direction.y > gridSize){
+            if (snake[0].x+direction.x < 0 || snake[0].x+direction.x > gridSize-1 || snake[0].y+direction.y < 0 || snake[0].y+direction.y > gridSize){
                 clearInterval(interval);
+                if (best<score){
+                    document.getElementById("bestScore").textContent = score.toString();
+                }
             } else {
                 snake.pop();
                 snake.unshift({x: snake[0].x+direction.x, y: snake[0].y+direction.y});
@@ -112,7 +140,7 @@
             }
             drawGame();
         }
-        let interval = setInterval(moveSnake, 200);
+        let interval = setInterval(moveSnake, 150);
         
 
         document.addEventListener("keydown", (event) => {

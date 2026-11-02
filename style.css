@@ -1,4 +1,23 @@
-footer .counter {
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background-color: rgb(220, 230, 175);
+    font-family: "Press Start 2P", monospace;
+}
+
+.score {
+    display: flex;
+    gap: 50px;
+}
+
+.counter, .best {
+    display: flex;
+    flex-direction: row;
+}
+
+head .counter {
     display: flex;
     margin: 5px;
 }
