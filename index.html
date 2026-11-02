@@ -50,6 +50,8 @@
         let direction = { x: 1, y: 0 };
         let food = { x: 15, y: 15 };
         let score = 0;
+        let best = 0;
+        let canChangeDirection = true;
 
         // ===== DRAWING =====
         const drawGame = () => {
@@ -108,37 +110,53 @@
         // ===================================
 
         function moveSnake() {
-            if (snake[0].x+direction.x < 0 || snake[0].x+direction.x > gridSize-1 || snake[0].y+direction.y < 0 || snake[0].y+direction.y > gridSize){
-                clearInterval(interval);
-                if (best<score){
-                    document.getElementById("bestScore").textContent = score.toString();
-                }
-            } else {
+            if (!gameOver()){
                 snake.pop();
                 snake.unshift({x: snake[0].x+direction.x, y: snake[0].y+direction.y});
-                if (snake[0].x == food.x && snake[0].y == food.y) {
-                score++;
-                if (score%3===0){
+                if (snake[0].x === food.x && snake[0].y === food.y) {
+                    score++;
                     snake.push({x: snake[snake.length-1].x+direction.x, y: snake[snake.length-1].y+direction.y})
-                }
-                document.getElementById("count").textContent = score.toString();
-                let outSnake = false;
-                while (!outSnake){
-                    food = {
-                        x: Math.floor((Math.random()*gridSize)),
-                        y: Math.floor((Math.random()*gridSize))
-                    } 
-                    outSnake = true;
-                    for (let i = 0; i < snake.length; i++){
-                        if (snake[i].x===food.x && snake[i].y===food.y){
-                            outSnake = false;
-                            break;
+                    document.getElementById("count").textContent = score.toString();
+                    let outSnake = false;
+                    while (!outSnake){
+                        food = {
+                            x: Math.floor((Math.random()*gridSize)),
+                            y: Math.floor((Math.random()*gridSize))
+                        } 
+                        outSnake = true;
+                        for (let i = 0; i < snake.length; i++){
+                            if (snake[i].x===food.x && snake[i].y===food.y){
+                                outSnake = false;
+                                break;
+                            }
                         }
                     }
                 }     
             }
-            }
+            canChangeDirection = true;
             drawGame();
+        }
+
+        function gameOver(){
+            let end = false;
+            if (snake[0].x+direction.x < 0 || snake[0].x+direction.x > gridSize-1 || snake[0].y+direction.y < 0 || snake[0].y+direction.y > gridSize){
+                clearInterval(interval);
+                if (best<score){
+                    document.getElementById("bestScore").textContent = score.toString();
+                    end = true;
+                }
+            } else {
+                for (let i = 2; i<snake.length; i++) {
+                    if (snake[0].x===snake[i].x && snake[0].y===snake[i].y){
+                        clearInterval(interval);
+                        if (best<score){
+                            document.getElementById("bestScore").textContent = score.toString();
+                            end = true;
+                        }
+                    }
+                }
+            }
+            return end;
         }
         let interval = setInterval(moveSnake, 150);
         
@@ -146,22 +164,26 @@
         document.addEventListener("keydown", (event) => {
             switch(event.key){
                 case 'ArrowUp':
-                    if (direction.y !== 1){
+                    if (direction.y !== 1 && canChangeDirection){
+                        canChangeDirection = false;
                         direction = { x: 0, y: -1 };
                     }
                     break;
                 case 'ArrowDown':
-                    if (direction.y !== -1){
+                    if (direction.y !== -1 && canChangeDirection){
+                        canChangeDirection = false;
                         direction = { x: 0, y: 1 };
                     }
                     break;
                 case 'ArrowLeft':
-                    if (direction.x !== 1){
+                    if (direction.x !== 1 && canChangeDirection){
+                        canChangeDirection = false;
                         direction = { x: -1, y: 0 };
                     }
                     break;
                 case 'ArrowRight': 
-                    if (direction.x !== -1){
+                    if (direction.x !== -1 && canChangeDirection){
+                        canChangeDirection = false;
                         direction = { x: 1, y: 0 };
                     }
                     break;
