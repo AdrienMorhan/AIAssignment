@@ -13,6 +13,17 @@
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
             background-color: greenyellow;
         }
+
+        .restart-button {
+            background-color: rgb(0, 100, 200);
+            color: white;
+            padding: 10px 20px;
+            border: 2px solid black;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: "Press Start 2P", monospace;
+        }
     </style>
 </head>
 <body>
@@ -49,6 +60,7 @@
         
         let direction = { x: 1, y: 0 };
         let food = { x: 15, y: 15 };
+        let interval;
         let score = 0;
         let best = 0;
         let canChangeDirection = true;
@@ -141,25 +153,26 @@
             let end = false;
             if (snake[0].x+direction.x < 0 || snake[0].x+direction.x > gridSize-1 || snake[0].y+direction.y < 0 || snake[0].y+direction.y > gridSize){
                 clearInterval(interval);
+                end = true;
                 if (best<score){
+                    best = score;
                     document.getElementById("bestScore").textContent = score.toString();
-                    end = true;
                 }
             } else {
                 for (let i = 2; i<snake.length; i++) {
                     if (snake[0].x===snake[i].x && snake[0].y===snake[i].y){
                         clearInterval(interval);
+                        end = true;
                         if (best<score){
+                            best = score;
                             document.getElementById("bestScore").textContent = score.toString();
-                            end = true;
                         }
                     }
                 }
             }
             return end;
         }
-        let interval = setInterval(moveSnake, 150);
-        
+        interval = setInterval(moveSnake, 150);
 
         document.addEventListener("keydown", (event) => {
             switch(event.key){
@@ -189,11 +202,33 @@
                     break;
             }
         });
-        
-        
-        
-        
 
+        function restartGame(){
+            snake = [
+                { x: 10, y: 10 },
+                { x: 9, y: 10 },
+                { x: 8, y: 10 }
+            ];
+            
+            direction = { x: 1, y: 0 };
+            food = { x: 15, y: 15 };
+            score = 0;
+            document.getElementById("count").textContent = score.toString();
+            canChangeDirection = true;
+            interval = setInterval(moveSnake, 150);
+            drawGame();
+        }
+
+
+        var buttonRestart = document.createElement("button");
+        buttonRestart.textContent="Restart";
+        buttonRestart.addEventListener("click", (event)=>{
+            clearInterval(interval);
+            restartGame();
+        });
+
+        buttonRestart.className = "restart-button";
+        document.body.appendChild(buttonRestart);
     </script>
 
 </body>
