@@ -14,8 +14,7 @@
             background-color: greenyellow;
         }
 
-        .restart-button {
-            background-color: rgb(0, 100, 200);
+        .restart-button, .pause-button {
             color: white;
             padding: 10px 20px;
             border: 2px solid black;
@@ -23,6 +22,20 @@
             border-radius: 10px;
             cursor: pointer;
             font-family: "Press Start 2P", monospace;
+        }
+
+        .restart-button {
+            background-color: rgb(0, 100, 200);
+        }
+
+        .pause-button {
+            background-color: green;
+            width: 125px;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 30px;
         }
     </style>
 </head>
@@ -64,6 +77,7 @@
         let score = 0;
         let best = 0;
         let canChangeDirection = true;
+        let moveDelay = 200;
 
         // ===== DRAWING =====
         const drawGame = () => {
@@ -129,6 +143,11 @@
                     score++;
                     snake.push({x: snake[snake.length-1].x+direction.x, y: snake[snake.length-1].y+direction.y})
                     document.getElementById("count").textContent = score.toString();
+                    if (score%3===1){
+                        clearInterval(interval);
+                        moveDelay -= 10;
+                        interval = setInterval(moveSnake, moveDelay);
+                    }
                     let outSnake = false;
                     while (!outSnake){
                         food = {
@@ -172,7 +191,7 @@
             }
             return end;
         }
-        interval = setInterval(moveSnake, 150);
+        interval = setInterval(moveSnake, 200);
 
         document.addEventListener("keydown", (event) => {
             switch(event.key){
@@ -215,7 +234,10 @@
             score = 0;
             document.getElementById("count").textContent = score.toString();
             canChangeDirection = true;
-            interval = setInterval(moveSnake, 150);
+            moveDelay = 200;
+            buttonPause.textContent="Pause";
+            buttonPause.style.backgroundColor = "red";
+            interval = setInterval(moveSnake, moveDelay);
             drawGame();
         }
 
@@ -226,9 +248,29 @@
             clearInterval(interval);
             restartGame();
         });
-
         buttonRestart.className = "restart-button";
         document.body.appendChild(buttonRestart);
+
+        var buttonPause = document.createElement("button");
+        buttonPause.textContent="Pause";
+        buttonPause.addEventListener("click", (event)=>{
+            if (buttonPause.textContent==="Pause"){
+                clearInterval(interval);
+                buttonPause.textContent="Resume";
+                buttonPause.style.backgroundColor = "green";
+            } else {
+                interval = setInterval(moveSnake, moveDelay);
+                buttonPause.textContent="Pause";
+                buttonPause.style.backgroundColor = "red";
+            }
+        });
+        buttonPause.className = "pause-button";
+        document.body.appendChild(buttonPause);
+
+        const buttonContainer = document.createElement("div");
+        buttonContainer.className = "button-container";
+        document.body.appendChild(buttonContainer);
+        buttonContainer.append(buttonRestart, buttonPause);
     </script>
 
 </body>
