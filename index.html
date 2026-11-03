@@ -14,9 +14,13 @@
             background-color: greenyellow;
         }
 
-        .restart-button, .pause-button {
+        .pause-button {
+            text-align: center;
+            font-size: 10px;
             color: white;
-            padding: 10px 20px;
+            background-color: red;
+            padding: 15px 25px;
+            width: 125px;
             border: 2px solid black;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
             border-radius: 10px;
@@ -24,18 +28,10 @@
             font-family: "Press Start 2P", monospace;
         }
 
-        .restart-button {
-            background-color: rgb(0, 100, 200);
-        }
-
-        .pause-button {
-            background-color: green;
-            width: 125px;
-        }
-
-        .button-container {
-            display: flex;
-            gap: 30px;
+        #info {
+            text-align: center;
+            font-size: 24px;
+            font-family: "Press Start 2P", monospace;
         }
     </style>
 </head>
@@ -75,7 +71,7 @@
         let food = { x: 15, y: 15 };
         let interval;
         let score = 0;
-        let best = 0;
+        let best = localStorage.getItem("best") || 0;
         let canChangeDirection = true;
         let moveDelay = 200;
 
@@ -135,6 +131,13 @@
         //
         // ===================================
 
+        /**
+         * This function:
+         * - moves the snake
+         * - increase the score when the food is eaten
+         * - increase the speed of the snake
+         * - ends game if the snake touch the border or himself
+         */
         function moveSnake() {
             if (!gameOver()){
                 snake.pop();
@@ -168,36 +171,49 @@
             drawGame();
         }
 
+        /**
+         * This function check if the game is over or not.
+         * It also increase the best score if needed
+         */
         function gameOver(){
             let end = false;
-            if (snake[0].x+direction.x < 0 || snake[0].x+direction.x > gridSize-1 || snake[0].y+direction.y < 0 || snake[0].y+direction.y > gridSize){
+            if (snake[0].x+direction.x < 0 || snake[0].x+direction.x > gridSize-1 || snake[0].y+direction.y < 0 || snake[0].y+direction.y > gridSize-1){
                 clearInterval(interval);
                 end = true;
+                document.getElementById("info").textContent = "Game Over!";
+                buttonPause.textContent="Restart";
+                buttonPause.style.backgroundColor = "blue";
                 if (best<score){
                     best = score;
-                    document.getElementById("bestScore").textContent = score.toString();
+                    localStorage.setItem("best", best);
                 }
             } else {
                 for (let i = 2; i<snake.length; i++) {
                     if (snake[0].x===snake[i].x && snake[0].y===snake[i].y){
                         clearInterval(interval);
                         end = true;
+                        document.getElementById("info").textContent = "Game Over!";
+                        buttonPause.textContent="Restart";
+                        buttonPause.style.backgroundColor = "blue";
                         if (best<score){
                             best = score;
-                            document.getElementById("bestScore").textContent = score.toString();
+                            localStorage.setItem("best", best);
                         }
                     }
                 }
             }
             return end;
         }
+
+        // set an interval between each movement of the snake
         interval = setInterval(moveSnake, 200);
 
+        // Detect the pressed arrow and determine the direction according to it
         document.addEventListener("keydown", (event) => {
             switch(event.key){
                 case 'ArrowUp':
                     if (direction.y !== 1 && canChangeDirection){
-                        canChangeDirection = false;
+                        canChangeDirection = false; // Avoid the possibility to go upward and then backward if we press really fast a sided arrow
                         direction = { x: 0, y: -1 };
                     }
                     break;
@@ -222,6 +238,7 @@
             }
         });
 
+        // reset all variable to the beggining state
         function restartGame(){
             snake = [
                 { x: 10, y: 10 },
@@ -237,40 +254,33 @@
             moveDelay = 200;
             buttonPause.textContent="Pause";
             buttonPause.style.backgroundColor = "red";
+            document.getElementById("info").textContent = "";
             interval = setInterval(moveSnake, moveDelay);
             drawGame();
         }
 
-
-        var buttonRestart = document.createElement("button");
-        buttonRestart.textContent="Restart";
-        buttonRestart.addEventListener("click", (event)=>{
-            clearInterval(interval);
-            restartGame();
-        });
-        buttonRestart.className = "restart-button";
-        document.body.appendChild(buttonRestart);
-
+        // Button to pause, resume and restart the game
         var buttonPause = document.createElement("button");
         buttonPause.textContent="Pause";
+
         buttonPause.addEventListener("click", (event)=>{
+
             if (buttonPause.textContent==="Pause"){
                 clearInterval(interval);
                 buttonPause.textContent="Resume";
                 buttonPause.style.backgroundColor = "green";
-            } else {
+
+            } else if (buttonPause.textContent==="Resume") {
                 interval = setInterval(moveSnake, moveDelay);
                 buttonPause.textContent="Pause";
                 buttonPause.style.backgroundColor = "red";
+
+            } else {
+                restartGame();
             }
         });
         buttonPause.className = "pause-button";
         document.body.appendChild(buttonPause);
-
-        const buttonContainer = document.createElement("div");
-        buttonContainer.className = "button-container";
-        document.body.appendChild(buttonContainer);
-        buttonContainer.append(buttonRestart, buttonPause);
     </script>
 
 </body>
