@@ -21,3 +21,30 @@ head .counter {
     display: flex;
     margin: 5px;
 }
+
+.pause-button {
+    font-size: 10px;
+    background-color: red;
+    padding: 15px 25px;
+    margin-bottom: 5px;
+    width: 125px;
+    border: 2px solid black;
+}
+
+
+.reset-button, .pause-button {
+    text-align: center;
+    color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: "Press Start 2P", monospace;
+}
+
+.reset-button {
+    font-size: 8px;
+    background-color: rgb(1, 1, 1);
+    padding: 10px 15px;
+    width: 150px;
+    border: 2px solid rgb(255, 255, 255);
+}

@@ -14,20 +14,6 @@
             background-color: greenyellow;
         }
 
-        .pause-button {
-            text-align: center;
-            font-size: 10px;
-            color: white;
-            background-color: red;
-            padding: 15px 25px;
-            width: 125px;
-            border: 2px solid black;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            border-radius: 10px;
-            cursor: pointer;
-            font-family: "Press Start 2P", monospace;
-        }
-
         #info {
             text-align: center;
             font-size: 24px;
@@ -45,7 +31,7 @@
         </div>
         <div class="best">
             <h4>Best:</h4>
-            <h4 id="bestScore">0</h4>
+            <h4 id="best">0</h4>
         </div>
     </div>
     <canvas id="gameCanvas" width="400"
@@ -72,6 +58,7 @@
         let interval;
         let score = 0;
         let best = localStorage.getItem("best") || 0;
+        document.getElementById("best").textContent = best.toString();
         let canChangeDirection = true;
         let moveDelay = 200;
 
@@ -185,6 +172,7 @@
                 buttonPause.style.backgroundColor = "blue";
                 if (best<score){
                     best = score;
+                    document.getElementById("best").textContent = best.toString();
                     localStorage.setItem("best", best);
                 }
             } else {
@@ -197,6 +185,7 @@
                         buttonPause.style.backgroundColor = "blue";
                         if (best<score){
                             best = score;
+                            document.getElementById("best").textContent = best.toString();
                             localStorage.setItem("best", best);
                         }
                     }
@@ -281,6 +270,16 @@
         });
         buttonPause.className = "pause-button";
         document.body.appendChild(buttonPause);
+
+        var resetBest = document.createElement("button");
+        resetBest.textContent = "Reset Best";
+        resetBest.addEventListener("click", (event)=>{
+            document.getElementById("best").textContent = "0";
+            best = 0;
+        });
+
+        resetBest.className = "reset-button";
+        document.body.appendChild(resetBest);
     </script>
 
 </body>
